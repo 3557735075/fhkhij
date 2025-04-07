@@ -6,14 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>创造太阳</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: 'Poppins', sans-serif;
-            /* 将背景设置为中国石油大学（华东）的照片 */
             background: url('school.jpg') no-repeat center center fixed;
             background-size: cover;
             display: flex;
@@ -25,9 +24,6 @@
        .modal {
             display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             background: white;
             padding: 20px;
             border-radius: 10px;
@@ -83,12 +79,13 @@
             z-index: 999;
         }
 
-        #mainImage {
-            width: 90vw;
-            height: 90vh;
-            object-fit: contain;
-            filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
-            user-select: none;
+        #clickable-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
         }
 
         /* 添加移动端适配样式 */
@@ -105,57 +102,30 @@
                 height: 25px;
                 line-height: 25px;
             }
-
-            #mainImage {
-                width: 95vw;
-                height: 95vh;
-            }
         }
     </style>
 </head>
 
 <body>
-    <img src="lz.jpg" usemap="#image-map" id="mainImage">
     <map name="image-map">
-        <area shape="rect" coords="438,550,661,684" data-img="2.jpg">
-        <area shape="rect" coords="304,565,453,676" data-img="3.jpg">
-        <area shape="rect" coords="178,579,304,698" data-img="4.jpg">
-        <area shape="rect" coords="30,639,208,773" data-img="5.jpg">
-        <area shape="rect" coords="30,579,208,654" data-img="6.jpg">
-        <area shape="rect" coords="126,758,386,958" data-img="7.jpg">
-        <area shape="rect" coords="379,788,609,958" data-img="8.jpg">
-        <area shape="rect" coords="772,691,995,810" data-img="9.jpg">
-        <area shape="rect" coords="690,817,891,944" data-img="10.jpg">
-        <area shape="rect" coords="653,631,779,736" data-img="11.jpg">
-        <area shape="rect" coords="987,453,1098,617" data-img="12.jpg">
-        <area shape="rect" coords="794,423,972,602" data-img="13.jpg">
-        <area shape="rect" coords="453,684,661,802" data-img="14.jpg">
-        <area shape="rect" coords="564,37,713,141" data-img="15.jpg">
-        <area shape="rect" coords="356,111,438,178" data-img="16.jpg">
-        <area shape="rect" coords="623,267,831,401" data-img="17.jpg">
-        <area shape="rect" coords="408,163,512,238" data-img="18.jpg">
-        <area shape="rect" coords="490,178,564,245" data-img="19.jpg">
-        <area shape="rect" coords="534,193,623,282" data-img="20.jpg">
-        <area shape="rect" coords="690,59,772,104" data-img="21.jpg">
-        <area shape="rect" coords="720,82,802,149" data-img="22.jpg">
-        <area shape="rect" coords="616,208,727,282" data-img="23.jpg">
-        <area shape="rect" coords="653,111,742,193" data-img="24.jpg">
-        <area shape="rect" coords="705,186,809,290" data-img="25.jpg">
-        <area shape="rect" coords="230,431,379,550" data-img="26.jpg">
-        <area shape="rect" coords="134,475,275,572" data-img="27.jpg">
-        <area shape="rect" coords="475,416,638,535" data-img="28.jpg">
-        <area shape="rect" coords="631,423,802,535" data-img="29.jpg">
-        <area shape="rect" coords="653,520,802,602" data-img="30.jpg">
-        <area shape="rect" coords="816,260,1061,409" data-img="31.jpg">
-        <area shape="rect" coords="15,15,171,178" data-img="32.jpg">
-        <area shape="rect" coords="7,453,134,587" data-img="33.jpg">
-        <area shape="rect" coords="30,238,260,423" data-img="34.jpg">
-        <area shape="rect" coords="297,253,520,416" data-img="35.jpg">
-        <area shape="rect" coords="438,37,601,171" data-img="36.svg">
-        <area shape="rect" coords="802,15,1054,104" data-img="37.svg">
-        <area shape="rect" coords="831,97,1069,178" data-img="38.svg">
-        <area shape="rect" coords="846,186,1061,282" data-img="39.svg">
+        <!-- 这里重新规划点击区域 -->
+        <!-- 假设将页面划分为 6x6 的网格 -->
+        <?php
+        $numRows = 6;
+        $numCols = 6;
+        $imageIndex = 1;
+        for ($i = 0; $i < $numRows; $i++) {
+            for ($j = 0; $j < $numCols; $j++) {
+                $x1 = ($j / $numCols) * 1000;
+                $y1 = ($i / $numRows) * 1000;
+                $x2 = (($j + 1) / $numCols) * 1000;
+                $y2 = (($i + 1) / $numRows) * 1000;
+                echo '<area shape="rect" coords="'.round($x1).','.round($y1).','.round($x2).','.round($y2).'" data-img="'.($imageIndex++).'.jpg">';
+            }
+        }
+        ?>
     </map>
+    <div id="clickable-overlay"></div>
     <div class="overlay" id="overlay" onclick="closeModal()" ontouchstart="closeModal()" style="display: none;"></div>
     <div class="modal" id="modal" style="display: none;">
         <span class="modal-close" onclick="closeModal()" ontouchstart="closeModal()">×</span>
@@ -163,19 +133,30 @@
     </div>
     <script>
         // 动态绑定事件
-        document.querySelectorAll('area').forEach(area => {
-            const imgUrl = area.getAttribute('data-img');
-            area.addEventListener('click', function (event) {
-                event.preventDefault();
-                showImage(imgUrl);
+        const clickableOverlay = document.getElementById('clickable-overlay');
+        clickableOverlay.addEventListener('click', function (event) {
+            const rect = clickableOverlay.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            let isInsideArea = false;
+            document.querySelectorAll('area').forEach(area => {
+                const coords = area.getAttribute('coords').split(',').map(Number);
+                const x1 = Math.min(coords[0], coords[2]);
+                const y1 = Math.min(coords[1], coords[3]);
+                const x2 = Math.max(coords[0], coords[2]);
+                const y2 = Math.max(coords[1], coords[3]);
+                if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
+                    isInsideArea = true;
+                    const imgUrl = area.getAttribute('data-img');
+                    showImage(imgUrl, x, y);
+                }
             });
-            area.addEventListener('touchstart', function (event) {
-                event.preventDefault();
-                showImage(imgUrl);
-            });
+            if (!isInsideArea) {
+                event.stopPropagation();
+            }
         });
 
-        function showImage(imgUrl) {
+        function showImage(imgUrl, clickX, clickY) {
             const modal = document.getElementById('modal');
             const overlay = document.getElementById('overlay');
             const modalImg = document.getElementById('modalImage');
@@ -184,6 +165,22 @@
                 return;
             }
             modalImg.src = imgUrl;
+            // 计算弹窗位置，尽量分布均匀
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            const modalWidth = modal.offsetWidth;
+            const modalHeight = modal.offsetHeight;
+            let left = clickX + 20;
+            let top = clickY + 20;
+            // 处理弹窗超出窗口边界的情况
+            if (left + modalWidth > windowWidth) {
+                left = windowWidth - modalWidth - 20;
+            }
+            if (top + modalHeight > windowHeight) {
+                top = windowHeight - modalHeight - 20;
+            }
+            modal.style.left = left + 'px';
+            modal.style.top = top + 'px';
             modal.style.display = 'block';
             overlay.style.display = 'block';
         }
@@ -197,17 +194,15 @@
             }
         }
 
-        // 修复坐标顺序并限制在图片范围内
+        // 修复坐标顺序并限制在窗口范围内
         document.querySelectorAll('area').forEach(area => {
             const coords = area.getAttribute('coords').split(',').map(Number);
             const x1 = Math.min(coords[0], coords[2]);
             const y1 = Math.min(coords[1], coords[3]);
             const x2 = Math.max(coords[0], coords[2]);
             const y2 = Math.max(coords[1], coords[3]);
-            // 确保坐标不超过图片尺寸
-            const mainImage = document.getElementById('mainImage');
-            const maxX = mainImage.offsetWidth;
-            const maxY = mainImage.offsetHeight;
+            const maxX = window.innerWidth;
+            const maxY = window.innerHeight;
             const clampedCoords = [
                 Math.max(0, Math.min(x1, maxX)),
                 Math.max(0, Math.min(y1, maxY)),
@@ -217,68 +212,14 @@
             area.setAttribute('coords', clampedCoords.join(','));
         });
 
-        const mainImage = document.getElementById('mainImage');
-        let naturalWidth = mainImage.naturalWidth;
-        let naturalHeight = mainImage.naturalHeight;
-        mainImage.onload = () => {
-            naturalWidth = mainImage.naturalWidth;
-            naturalHeight = mainImage.naturalHeight;
-        };
-
-        window.addEventListener('resize', () => {
-            const scaleX = naturalWidth / mainImage.offsetWidth;
-            const scaleY = naturalHeight / mainImage.offsetHeight;
-            document.querySelectorAll('area').forEach(area => {
-                const coords = area.getAttribute('coords').split(',').map(Number);
-                const scaledCoords = [
-                    Math.round(coords[0] / scaleX),
-                    Math.round(coords[1] / scaleY),
-                    Math.round(coords[2] / scaleX),
-                    Math.round(coords[3] / scaleY)
-                ];
-                // 修复缩放后的坐标范围
-                const clampedCoords = [
-                    Math.max(0, Math.min(scaledCoords[0], naturalWidth)),
-                    Math.max(0, Math.min(scaledCoords[1], naturalHeight)),
-                    Math.max(0, Math.min(scaledCoords[2], naturalWidth)),
-                    Math.max(0, Math.min(scaledCoords[3], naturalHeight))
-                ];
-                area.setAttribute('coords', clampedCoords.join(','));
-            });
-        });
-
-        const imagesToLoad = ['lz.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg', '16.jpg', '17.jpg', '18.jpg', '19.jpg', '20.jpg', '21.jpg', '22.jpg', '23.jpg', '24.jpg', '25.jpg', '26.jpg', '27.jpg', '28.jpg', '29.jpg', '30.jpg', '31.jpg', '32.jpg', '33.jpg', '34.jpg', '35.jpg', '36.svg', '37.svg', '38.svg', '39.svg'];
+        const imagesToLoad = [];
+        for (let i = 1; i <= 36; i++) {
+            imagesToLoad.push(i + '.jpg');
+        }
         const preloadedImages = {};
         imagesToLoad.forEach(image => {
             preloadedImages[image] = new Image();
             preloadedImages[image].src = image;
-        });
-
-        // 阻止图片外区域点击弹出图片
-        mainImage.addEventListener('click', function (event) {
-            const rect = mainImage.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-            let isInsideArea = false;
-            document.querySelectorAll('area').forEach(area => {
-                const coords = area.getAttribute('coords').split(',').map(Number);
-                const x1 = Math.min(coords[0], coords[2]);
-                const y1 = Math.min(coords[1], coords[3]);
-                const x2 = Math.max(coords[0], coords[2]);
-                const y2 = Math.max(coords[1], coords[3]);
-                if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
-                    isInsideArea = true;
-                }
-            });
-            if (!isInsideArea) {
-                event.stopPropagation();
-            }
-        });
-
-        document.body.addEventListener('click', function (event) {
-            if (event.target!== document.getElementById('mainImage')) {
-                event.stopPropagation();
-            }
         });
     </script>
 </body>
