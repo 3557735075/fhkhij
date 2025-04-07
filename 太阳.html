@@ -108,22 +108,43 @@
 
 <body>
     <map name="image-map">
-        <!-- 这里重新规划点击区域 -->
-        <!-- 假设将页面划分为 6x6 的网格 -->
-        <?php
-        $numRows = 6;
-        $numCols = 6;
-        $imageIndex = 1;
-        for ($i = 0; $i < $numRows; $i++) {
-            for ($j = 0; $j < $numCols; $j++) {
-                $x1 = ($j / $numCols) * 1000;
-                $y1 = ($i / $numRows) * 1000;
-                $x2 = (($j + 1) / $numCols) * 1000;
-                $y2 = (($i + 1) / $numRows) * 1000;
-                echo '<area shape="rect" coords="'.round($x1).','.round($y1).','.round($x2).','.round($y2).'" data-img="'.($imageIndex++).'.jpg">';
-            }
-        }
-        ?>
+        <!-- 手动定义 6x6 网格的点击区域 -->
+        <area shape="rect" coords="0%,0%,16.67%,16.67%" data-img="1.jpg">
+        <area shape="rect" coords="16.67%,0%,33.33%,16.67%" data-img="2.jpg">
+        <area shape="rect" coords="33.33%,0%,50%,16.67%" data-img="3.jpg">
+        <area shape="rect" coords="50%,0%,66.67%,16.67%" data-img="4.jpg">
+        <area shape="rect" coords="66.67%,0%,83.33%,16.67%" data-img="5.jpg">
+        <area shape="rect" coords="83.33%,0%,100%,16.67%" data-img="6.jpg">
+        <area shape="rect" coords="0%,16.67%,16.67%,33.33%" data-img="7.jpg">
+        <area shape="rect" coords="16.67%,16.67%,33.33%,33.33%" data-img="8.jpg">
+        <area shape="rect" coords="33.33%,16.67%,50%,33.33%" data-img="9.jpg">
+        <area shape="rect" coords="50%,16.67%,66.67%,33.33%" data-img="10.jpg">
+        <area shape="rect" coords="66.67%,16.67%,83.33%,33.33%" data-img="11.jpg">
+        <area shape="rect" coords="83.33%,16.67%,100%,33.33%" data-img="12.jpg">
+        <area shape="rect" coords="0%,33.33%,16.67%,50%" data-img="13.jpg">
+        <area shape="rect" coords="16.67%,33.33%,33.33%,50%" data-img="14.jpg">
+        <area shape="rect" coords="33.33%,33.33%,50%,50%" data-img="15.jpg">
+        <area shape="rect" coords="50%,33.33%,66.67%,50%" data-img="16.jpg">
+        <area shape="rect" coords="66.67%,33.33%,83.33%,50%" data-img="17.jpg">
+        <area shape="rect" coords="83.33%,33.33%,100%,50%" data-img="18.jpg">
+        <area shape="rect" coords="0%,50%,16.67%,66.67%" data-img="19.jpg">
+        <area shape="rect" coords="16.67%,50%,33.33%,66.67%" data-img="20.jpg">
+        <area shape="rect" coords="33.33%,50%,50%,66.67%" data-img="21.jpg">
+        <area shape="rect" coords="50%,50%,66.67%,66.67%" data-img="22.jpg">
+        <area shape="rect" coords="66.67%,50%,83.33%,66.67%" data-img="23.jpg">
+        <area shape="rect" coords="83.33%,50%,100%,66.67%" data-img="24.jpg">
+        <area shape="rect" coords="0%,66.67%,16.67%,83.33%" data-img="25.jpg">
+        <area shape="rect" coords="16.67%,66.67%,33.33%,83.33%" data-img="26.jpg">
+        <area shape="rect" coords="33.33%,66.67%,50%,83.33%" data-img="27.jpg">
+        <area shape="rect" coords="50%,66.67%,66.67%,83.33%" data-img="28.jpg">
+        <area shape="rect" coords="66.67%,66.67%,83.33%,83.33%" data-img="29.jpg">
+        <area shape="rect" coords="83.33%,66.67%,100%,83.33%" data-img="30.jpg">
+        <area shape="rect" coords="0%,83.33%,16.67%,100%" data-img="31.jpg">
+        <area shape="rect" coords="16.67%,83.33%,33.33%,100%" data-img="32.jpg">
+        <area shape="rect" coords="33.33%,83.33%,50%,100%" data-img="33.jpg">
+        <area shape="rect" coords="50%,83.33%,66.67%,100%" data-img="34.jpg">
+        <area shape="rect" coords="66.67%,83.33%,83.33%,100%" data-img="35.jpg">
+        <area shape="rect" coords="83.33%,83.33%,100%,100%" data-img="36.jpg">
     </map>
     <div id="clickable-overlay"></div>
     <div class="overlay" id="overlay" onclick="closeModal()" ontouchstart="closeModal()" style="display: none;"></div>
@@ -135,12 +156,24 @@
         // 动态绑定事件
         const clickableOverlay = document.getElementById('clickable-overlay');
         clickableOverlay.addEventListener('click', function (event) {
+            handleClick(event);
+        });
+        clickableOverlay.addEventListener('touchstart', function (event) {
+            handleClick(event.touches[0]);
+        });
+
+        function handleClick(event) {
             const rect = clickableOverlay.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
             let isInsideArea = false;
             document.querySelectorAll('area').forEach(area => {
-                const coords = area.getAttribute('coords').split(',').map(Number);
+                const coords = area.getAttribute('coords').split(',').map(coord => {
+                    if (coord.includes('%')) {
+                        return parseFloat(coord) / 100 * (coord.includes('x') ? rect.width : rect.height);
+                    }
+                    return parseFloat(coord);
+                });
                 const x1 = Math.min(coords[0], coords[2]);
                 const y1 = Math.min(coords[1], coords[3]);
                 const x2 = Math.max(coords[0], coords[2]);
@@ -154,7 +187,7 @@
             if (!isInsideArea) {
                 event.stopPropagation();
             }
-        });
+        }
 
         function showImage(imgUrl, clickX, clickY) {
             const modal = document.getElementById('modal');
@@ -194,24 +227,7 @@
             }
         }
 
-        // 修复坐标顺序并限制在窗口范围内
-        document.querySelectorAll('area').forEach(area => {
-            const coords = area.getAttribute('coords').split(',').map(Number);
-            const x1 = Math.min(coords[0], coords[2]);
-            const y1 = Math.min(coords[1], coords[3]);
-            const x2 = Math.max(coords[0], coords[2]);
-            const y2 = Math.max(coords[1], coords[3]);
-            const maxX = window.innerWidth;
-            const maxY = window.innerHeight;
-            const clampedCoords = [
-                Math.max(0, Math.min(x1, maxX)),
-                Math.max(0, Math.min(y1, maxY)),
-                Math.max(0, Math.min(x2, maxX)),
-                Math.max(0, Math.min(y2, maxY))
-            ];
-            area.setAttribute('coords', clampedCoords.join(','));
-        });
-
+        // 预加载图片
         const imagesToLoad = [];
         for (let i = 1; i <= 36; i++) {
             imagesToLoad.push(i + '.jpg');
