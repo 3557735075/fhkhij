@@ -31,7 +31,21 @@
             z-index: 1000;
             max-width: 90%;
             max-height: 90vh;
-            animation: fadeIn 0.3s ease-in-out;
+            animation: fadeInScale 3s ease-in-out; /* 修改动画持续时间为3秒 */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.1); /* 初始缩放比例为0.1 */
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1); /* 最终缩放比例为1 */
+            }
         }
 
         @keyframes fadeIn {
@@ -107,45 +121,10 @@
 </head>
 
 <body>
-    <map name="image-map">
-        <!-- 手动定义 6x6 网格的点击区域 -->
-        <area shape="rect" coords="0%,0%,16.67%,16.67%" data-img="1.jpg">
-        <area shape="rect" coords="16.67%,0%,33.33%,16.67%" data-img="2.jpg">
-        <area shape="rect" coords="33.33%,0%,50%,16.67%" data-img="3.jpg">
-        <area shape="rect" coords="50%,0%,66.67%,16.67%" data-img="4.jpg">
-        <area shape="rect" coords="66.67%,0%,83.33%,16.67%" data-img="5.jpg">
-        <area shape="rect" coords="83.33%,0%,100%,16.67%" data-img="6.jpg">
-        <area shape="rect" coords="0%,16.67%,16.67%,33.33%" data-img="7.jpg">
-        <area shape="rect" coords="16.67%,16.67%,33.33%,33.33%" data-img="8.jpg">
-        <area shape="rect" coords="33.33%,16.67%,50%,33.33%" data-img="9.jpg">
-        <area shape="rect" coords="50%,16.67%,66.67%,33.33%" data-img="10.jpg">
-        <area shape="rect" coords="66.67%,16.67%,83.33%,33.33%" data-img="11.jpg">
-        <area shape="rect" coords="83.33%,16.67%,100%,33.33%" data-img="12.jpg">
-        <area shape="rect" coords="0%,33.33%,16.67%,50%" data-img="13.jpg">
-        <area shape="rect" coords="16.67%,33.33%,33.33%,50%" data-img="14.jpg">
-        <area shape="rect" coords="33.33%,33.33%,50%,50%" data-img="15.jpg">
-        <area shape="rect" coords="50%,33.33%,66.67%,50%" data-img="16.jpg">
-        <area shape="rect" coords="66.67%,33.33%,83.33%,50%" data-img="17.jpg">
-        <area shape="rect" coords="83.33%,33.33%,100%,50%" data-img="18.jpg">
-        <area shape="rect" coords="0%,50%,16.67%,66.67%" data-img="19.jpg">
-        <area shape="rect" coords="16.67%,50%,33.33%,66.67%" data-img="20.jpg">
-        <area shape="rect" coords="33.33%,50%,50%,66.67%" data-img="21.jpg">
-        <area shape="rect" coords="50%,50%,66.67%,66.67%" data-img="22.jpg">
-        <area shape="rect" coords="66.67%,50%,83.33%,66.67%" data-img="23.jpg">
-        <area shape="rect" coords="83.33%,50%,100%,66.67%" data-img="24.jpg">
-        <area shape="rect" coords="0%,66.67%,16.67%,83.33%" data-img="25.jpg">
-        <area shape="rect" coords="16.67%,66.67%,33.33%,83.33%" data-img="26.jpg">
-        <area shape="rect" coords="33.33%,66.67%,50%,83.33%" data-img="27.jpg">
-        <area shape="rect" coords="50%,66.67%,66.67%,83.33%" data-img="28.jpg">
-        <area shape="rect" coords="66.67%,66.67%,83.33%,83.33%" data-img="29.jpg">
-        <area shape="rect" coords="83.33%,66.67%,100%,83.33%" data-img="30.jpg">
-        <area shape="rect" coords="0%,83.33%,16.67%,100%" data-img="31.jpg">
-        <area shape="rect" coords="16.67%,83.33%,33.33%,100%" data-img="32.jpg">
-        <area shape="rect" coords="33.33%,83.33%,50%,100%" data-img="33.jpg">
-        <area shape="rect" coords="50%,83.33%,66.67%,100%" data-img="34.jpg">
-        <area shape="rect" coords="66.67%,83.33%,83.33%,100%" data-img="35.jpg">
-        <area shape="rect" coords="83.33%,83.33%,100%,100%" data-img="36.jpg">
-    </map>
+    <!-- 添加音频元素作为背景音乐 -->
+    <audio id="bg-music" src="http://music.163.com/song/media/outer/url?id=439142564.mp3" loop></audio>
+    <script src="https://files.cnblogs.com/files/quaint/sakuraPlus.js"></script>
+    <map name="image-map"></map>
     <div id="clickable-overlay"></div>
     <div class="overlay" id="overlay" onclick="closeModal()" ontouchstart="closeModal()" style="display: none;"></div>
     <div class="modal" id="modal" style="display: none;">
@@ -153,6 +132,27 @@
         <img class="modal-img" id="modalImage" src="31.jpg" alt="弹窗图片">
     </div>
     <script>
+        // 获取音频元素
+        const bgMusic = document.getElementById('bg-music');
+
+        // 动态生成点击区域
+        const map = document.querySelector('map');
+        const rows = 6;
+        const cols = 6;
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+                const area = document.createElement('area');
+                area.shape = 'rect';
+                const x1 = (j / cols) * 100;
+                const y1 = (i / rows) * 100;
+                const x2 = ((j + 1) / cols) * 100;
+                const y2 = ((i + 1) / rows) * 100;
+                area.coords = `${x1}%,${y1}%,${x2}%,${y2}%`;
+                area.dataset.img = `${i * cols + j + 1}.jpg`;
+                map.appendChild(area);
+            }
+        }
+
         // 动态绑定事件
         const clickableOverlay = document.getElementById('clickable-overlay');
         clickableOverlay.addEventListener('click', function (event) {
@@ -162,6 +162,22 @@
             handleClick(event.touches[0]);
         });
 
+        // 处理第一次交互以启动音频播放
+        function startMusicOnInteraction() {
+            bgMusic.play().then(() => {
+                console.log('音频开始播放');
+                // 移除事件监听器，避免重复触发
+                document.removeEventListener('touchstart', startMusicOnInteraction);
+                document.removeEventListener('click', startMusicOnInteraction);
+            }).catch(error => {
+                console.error('音频播放失败:', error);
+            });
+        }
+
+        // 监听触摸和点击事件
+        document.addEventListener('touchstart', startMusicOnInteraction);
+        document.addEventListener('click', startMusicOnInteraction);
+
         function handleClick(event) {
             const rect = clickableOverlay.getBoundingClientRect();
             const x = event.clientX - rect.left;
@@ -170,7 +186,7 @@
             document.querySelectorAll('area').forEach(area => {
                 const coords = area.getAttribute('coords').split(',').map(coord => {
                     if (coord.includes('%')) {
-                        return parseFloat(coord) / 100 * (coord.includes('x') ? rect.width : rect.height);
+                        return parseFloat(coord) / 100 * (coord.includes('x')? rect.width : rect.height);
                     }
                     return parseFloat(coord);
                 });
@@ -181,7 +197,7 @@
                 if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
                     isInsideArea = true;
                     const imgUrl = area.getAttribute('data-img');
-                    showImage(imgUrl, x, y);
+                    showImage(imgUrl);
                 }
             });
             if (!isInsideArea) {
@@ -189,7 +205,7 @@
             }
         }
 
-        function showImage(imgUrl, clickX, clickY) {
+        function showImage(imgUrl) {
             const modal = document.getElementById('modal');
             const overlay = document.getElementById('overlay');
             const modalImg = document.getElementById('modalImage');
@@ -198,22 +214,6 @@
                 return;
             }
             modalImg.src = imgUrl;
-            // 计算弹窗位置，尽量分布均匀
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
-            const modalWidth = modal.offsetWidth;
-            const modalHeight = modal.offsetHeight;
-            let left = clickX + 20;
-            let top = clickY + 20;
-            // 处理弹窗超出窗口边界的情况
-            if (left + modalWidth > windowWidth) {
-                left = windowWidth - modalWidth - 20;
-            }
-            if (top + modalHeight > windowHeight) {
-                top = windowHeight - modalHeight - 20;
-            }
-            modal.style.left = left + 'px';
-            modal.style.top = top + 'px';
             modal.style.display = 'block';
             overlay.style.display = 'block';
         }
@@ -229,7 +229,7 @@
 
         // 预加载图片
         const imagesToLoad = [];
-        for (let i = 1; i <= 36; i++) {
+        for (let i = 1; i <= rows * cols; i++) {
             imagesToLoad.push(i + '.jpg');
         }
         const preloadedImages = {};
@@ -240,4 +240,4 @@
     </script>
 </body>
 
-</html>
+</html>    
