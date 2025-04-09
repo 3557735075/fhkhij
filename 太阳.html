@@ -31,7 +31,7 @@
             z-index: 1000;
             max-width: 90%;
             max-height: 90vh;
-            animation: fadeInScale 3s ease-in-out; /* 修改动画持续时间为3秒 */
+            animation: fadeInScale 3s ease-in-out;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -40,11 +40,11 @@
         @keyframes fadeInScale {
             from {
                 opacity: 0;
-                transform: translate(-50%, -50%) scale(0.1); /* 初始缩放比例为0.1 */
+                transform: translate(-50%, -50%) scale(0.1);
             }
             to {
                 opacity: 1;
-                transform: translate(-50%, -50%) scale(1); /* 最终缩放比例为1 */
+                transform: translate(-50%, -50%) scale(1);
             }
         }
 
@@ -123,8 +123,47 @@
 <body>
     <!-- 添加音频元素作为背景音乐 -->
     <audio id="bg-music" src="http://music.163.com/song/media/outer/url?id=439142564.mp3" loop></audio>
-    <script src="https://files.cnblogs.com/files/quaint/sakuraPlus.js"></script>
-    <map name="image-map"></map>
+    <script src="sakuraPlus.js"></script>
+    <map name="image-map">
+        <area shape="rect" coords="590,740,890,920" data-img="2.jpg">
+        <area shape="rect" coords="410,760,610,910" data-img="3.jpg">
+        <area shape="rect" coords="240,780,410,940" data-img="4.jpg">
+        <area shape="rect" coords="40,860,280,1040" data-img="5.jpg">
+        <area shape="rect" coords="40,780,280,880" data-img="6.jpg">
+        <area shape="rect" coords="170,1020,520,1290" data-img="7.jpg">
+        <area shape="rect" coords="510,1060,820,1290" data-img="8.jpg">
+        <area shape="rect" coords="1040,930,1340,1090" data-img="9.jpg">
+        <area shape="rect" coords="930,1100,1200,1270" data-img="10.jpg">
+        <area shape="rect" coords="880,850,1050,990" data-img="11.jpg">
+        <area shape="rect" coords="1330,610,1480,830" data-img="12.jpg">
+        <area shape="rect" coords="1070,570,1310,810" data-img="13.jpg">
+        <area shape="rect" coords="610,920,890,1080" data-img="14.jpg">
+        <area shape="rect" coords="760,50,960,190" data-img="15.jpg">
+        <area shape="rect" coords="480,150,590,240" data-img="16.jpg">
+        <area shape="rect" coords="840,360,1120,540" data-img="17.jpg">
+        <area shape="rect" coords="550,220,690,320" data-img="18.jpg">
+        <area shape="rect" coords="660,240,760,330" data-img="19.jpg">
+        <area shape="rect" coords="720,260,840,380" data-img="20.jpg">
+        <area shape="rect" coords="930,80,1040,140" data-img="21.jpg">
+        <area shape="rect" coords="970,110,1080,200" data-img="22.jpg">
+        <area shape="rect" coords="830,280,980,380" data-img="23.jpg">
+        <area shape="rect" coords="880,150,1000,260" data-img="24.jpg">
+        <area shape="rect" coords="950,250,1090,390" data-img="25.jpg">
+        <area shape="rect" coords="310,580,510,740" data-img="26.jpg">
+        <area shape="rect" coords="180,640,370,770" data-img="27.jpg">
+        <area shape="rect" coords="640,560,860,720" data-img="28.jpg">
+        <area shape="rect" coords="850,570,1080,720" data-img="29.jpg">
+        <area shape="rect" coords="880,700,1080,810" data-img="30.jpg">
+        <area shape="rect" coords="1100,350,1430,550" data-img="31.jpg">
+        <area shape="rect" coords="20,20,230,240" data-img="32.jpg">
+        <area shape="rect" coords="10,610,180,790" data-img="33.jpg">
+        <area shape="rect" coords="40,320,350,570" data-img="34.jpg">
+        <area shape="rect" coords="400,340,700,560" data-img="35.jpg">
+        <area shape="rect" coords="590,50,810,230" data-img="36.jpg">
+        <area shape="rect" coords="1080,20,1420,140" data-img="37.jpg">
+        <area shape="rect" coords="1120,130,1440,240" data-img="38.jpg">
+        <area shape="rect" coords="1140,250,1430,380" data-img="39.jpg">
+    </map>
     <div id="clickable-overlay"></div>
     <div class="overlay" id="overlay" onclick="closeModal()" ontouchstart="closeModal()" style="display: none;"></div>
     <div class="modal" id="modal" style="display: none;">
@@ -134,24 +173,6 @@
     <script>
         // 获取音频元素
         const bgMusic = document.getElementById('bg-music');
-
-        // 动态生成点击区域
-        const map = document.querySelector('map');
-        const rows = 6;
-        const cols = 6;
-        for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < cols; j++) {
-                const area = document.createElement('area');
-                area.shape = 'rect';
-                const x1 = (j / cols) * 100;
-                const y1 = (i / rows) * 100;
-                const x2 = ((j + 1) / cols) * 100;
-                const y2 = ((i + 1) / rows) * 100;
-                area.coords = `${x1}%,${y1}%,${x2}%,${y2}%`;
-                area.dataset.img = `${i * cols + j + 1}.jpg`;
-                map.appendChild(area);
-            }
-        }
 
         // 动态绑定事件
         const clickableOverlay = document.getElementById('clickable-overlay');
@@ -184,12 +205,7 @@
             const y = event.clientY - rect.top;
             let isInsideArea = false;
             document.querySelectorAll('area').forEach(area => {
-                const coords = area.getAttribute('coords').split(',').map(coord => {
-                    if (coord.includes('%')) {
-                        return parseFloat(coord) / 100 * (coord.includes('x')? rect.width : rect.height);
-                    }
-                    return parseFloat(coord);
-                });
+                const coords = area.getAttribute('coords').split(',').map(coord => parseFloat(coord));
                 const x1 = Math.min(coords[0], coords[2]);
                 const y1 = Math.min(coords[1], coords[3]);
                 const x2 = Math.max(coords[0], coords[2]);
@@ -229,7 +245,7 @@
 
         // 预加载图片
         const imagesToLoad = [];
-        for (let i = 1; i <= rows * cols; i++) {
+        for (let i = 1; i <= 39; i++) {
             imagesToLoad.push(i + '.jpg');
         }
         const preloadedImages = {};
